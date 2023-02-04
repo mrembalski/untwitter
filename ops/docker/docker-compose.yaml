@@ -1,15 +1,5 @@
 version: "3.9"
 services:
-  # tweets_db:
-  #   image: postgres:14.2-alpine
-  #   ports:
-  #     - 5433:5432
-  #   environment:
-  #     POSTGRES_PASSWORD: tweets_password
-  #     POSTGRES_DB: tweets_db
-  #   volumes:
-  #     - users_volume:/var/lib/postgresql/data
-
   users_db_service:
     image: postgres:14.2-alpine
     environment:
@@ -18,14 +8,14 @@ services:
       PGDATA: /pgtmpfs
     tmpfs:
       - /pgtmpfs
-    networks:
-      - nw
 
   users_web_service:
+    depends_on:
+      - users_db_service
     build:
       # Just to start at the src/ directory
       context: ../..
-      dockerfile: ops/docker/users.dockerfile
+      dockerfile: ops/docker/users_web_service.dockerfile
     ports:
       - 3000:3000
     # Same values, but different names
@@ -33,9 +23,14 @@ services:
       DB_HOST: users_db_service
       DB_USERNAME: postgres
       DB_PASSWORD: users_password
-    networks:
-      - nw
 
-networks:
-  nw:
-    name: nw
+  users_nginx:
+    depends_on:
+      - users_web_service
+    build:
+      # Just to start at the src/ directory
+      context: ../..
+      dockerfile: ops/docker/users_nginx.dockerfile
+    ports:
+      - 80:80
+      - 443:443
