@@ -15,7 +15,7 @@ export class UsersService {
         return this.userRepository.save(newUser);
     }
 
-    findUserById(id: number) {
-        return this.userRepository.findOneOrFail({ where: { id } });
+    findUserByUsername(username: string) {
+        return this.userRepository.findOneOrFail({ where: { username } });
     }
 }

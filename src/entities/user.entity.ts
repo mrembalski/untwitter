@@ -1,16 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {Column, Entity, OneToMany, PrimaryColumn} from 'typeorm';
+import {Tweet} from './tweet.entity';
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn({
-        type: 'bigint',
-        name: 'user_id',
-    })
-    id: number;
-
-    @Column({
+    @PrimaryColumn({
         nullable: false,
-        default: '',
     })
     username: string;
 
@@ -19,4 +13,8 @@ export class User {
         default: '',
     })
     password: string;
+
+    // each user can have multiple tweets
+    @OneToMany(() => Tweet, tweet => tweet.username)
+    tweets: Tweet[];
 }
