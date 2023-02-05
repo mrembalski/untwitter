@@ -14,7 +14,7 @@ export class User {
     })
     password: string;
 
-    // each user can have multiple tweets
+    // each user can have multiple follows
     @OneToMany(() => Tweet, tweet => tweet.username)
     tweets: Tweet[];
 }
