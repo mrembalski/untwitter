@@ -18,4 +18,8 @@ export class UsersService {
     findUserByUsername(username: string) {
         return this.userRepository.findOneOrFail({ where: { username } });
     }
+
+    doesUserExist(username: string) {
+        return this.userRepository.findOne({where: {username}}) != null;
+    }
 }

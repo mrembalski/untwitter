@@ -1,5 +1,4 @@
 import { Entity, Column, Unique, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.entity';
 
 @Entity()
 @Unique(['followeeUsername', 'followerUsername'])
@@ -19,6 +18,4 @@ export class Follow {
     nullable: false,
   })
   followerUsername: string;
-
-  // todo jaka tu jest relacja do User?
 }

@@ -29,4 +29,8 @@ export class TweetsService {
       order: { creationTime: 'DESC' }
     });
   }
+
+  doesTweetExist(id: number) {
+    return this.tweetRepository.findOne({where: {id}}) != null;
+  }
 }

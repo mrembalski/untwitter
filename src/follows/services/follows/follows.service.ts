@@ -12,17 +12,38 @@ export class FollowsService {
     ) {
     }
 
-    findFollow(followeeUsername: string, followerUsername: string) {
-        return this.followRepository.findOneOrFail({
+    doesFollowExist(followeeUsername: string, followerUsername: string) {
+        return this.followRepository.findOne({
             where: {
                 followeeUsername: followeeUsername,
                 followerUsername: followerUsername
             }
+        }) != null;
+    }
+
+    allFollows(username: string) {
+        let res = [];
+        this.followRepository.find({
+            where: {
+                followeeUsername: username
+            }
+        }).then((follows) => {
+            follows.forEach((follow) => {
+                res.push(follow.followerUsername);
+            });
         });
+        return res;
     }
 
     createFollow(createFollowDto: CreateFollowDto) {
         const newFollow = this.followRepository.create(createFollowDto);
         return this.followRepository.save(newFollow);
+    }
+
+    deleteFollow(followeeUsername: string, followerUsername: string) {
+        return this.followRepository.delete({
+            followeeUsername: followeeUsername,
+            followerUsername: followerUsername
+        });
     }
 }
