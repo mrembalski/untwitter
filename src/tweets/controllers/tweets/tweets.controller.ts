@@ -3,7 +3,6 @@ import {
     Controller,
     Get,
     Param,
-    ParseIntPipe,
     Post,
     UsePipes,
     ValidationPipe,
@@ -16,11 +15,18 @@ export class TweetsController {
     constructor(private readonly tweetService: TweetsService) { }
 
 
-    @Get('id/:id')
-    findTweetsById(
-        @Param('id', ParseIntPipe) id: number
+    @Get('username/:username')
+    findTweetsByUsername(
+        @Param('username') username: string
     ) {
-        return this.tweetService.findTweetById(id);
+        return this.tweetService.findTweetsByUsername(username);
+    }
+
+    @Get('phrase/:phrase')
+    findTweetsWithPhrase(
+        @Param('phrase') phrase: string
+    ) {
+        return this.tweetService.findTweetsWithPhrase(phrase);
     }
 
     @Post('create')
