@@ -1,5 +1,5 @@
-import {Entity, Column, PrimaryGeneratedColumn, ManyToOne} from 'typeorm';
-import {User} from './user.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class Tweet {
@@ -16,7 +16,8 @@ export class Tweet {
 
     @Column({
         type: "timestamptz",
-        default: () => "CURRENT_TIMESTAMP" })
+        default: () => "CURRENT_TIMESTAMP"
+    })
     creationTime: Date;
 
     @Column({
@@ -24,7 +25,4 @@ export class Tweet {
         default: ""
     })
     content: string;
-
-    @ManyToOne(() => User, user => user.tweets)
-    user: User;
 }

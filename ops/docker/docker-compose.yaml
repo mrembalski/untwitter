@@ -4,33 +4,73 @@ services:
     image: postgres:14.2-alpine
     environment:
       POSTGRES_PASSWORD: users_password
+      POSTGRES_USER: users_user
       POSTGRES_DB: users_db
-      PGDATA: /pgtmpfs
-    tmpfs:
-      - /pgtmpfs
+    expose:
+      - 5432
+    networks:
+      - nw
 
   users_web_service:
     depends_on:
       - users_db_service
     build:
-      # Just to start at the src/ directory
       context: ../..
       dockerfile: ops/docker/users_web_service.dockerfile
-    ports:
-      - 3000:3000
-    # Same values, but different names
     environment:
+      DB_PORT: 5432
       DB_HOST: users_db_service
-      DB_USERNAME: postgres
+      DB_USERNAME: users_user
       DB_PASSWORD: users_password
+      DB_NAME: users_db
+    networks:
+      - nw
+
+  tweets_db_service:
+    image: postgres:14.2-alpine
+    environment:
+      PGPORT: 5433
+      POSTGRES_PASSWORD: tweets_password
+      POSTGRES_USER: tweets_user
+      POSTGRES_DB: tweets_db
+    expose:
+      - 5433
+    networks:
+      - nw
+
+  tweets_web_service:
+    depends_on:
+      - tweets_db_service
+    build:
+      context: ../..
+      dockerfile: ops/docker/tweets_web_service.dockerfile
+    environment:
+      DB_PORT: 5433
+      DB_HOST: tweets_db_service
+      DB_USERNAME: tweets_user
+      DB_PASSWORD: tweets_password
+      DB_NAME: tweets_db
+    networks:
+      - nw
 
   users_nginx:
     depends_on:
       - users_web_service
+      - tweets_web_service
     build:
-      # Just to start at the src/ directory
       context: ../..
       dockerfile: ops/docker/users_nginx.dockerfile
     ports:
       - 80:80
       - 443:443
+    networks:
+      - nw
+
+volumes:
+  users-volume: #
+  tweets-volume:
+    #
+
+networks:
+  nw:
+    name: nw

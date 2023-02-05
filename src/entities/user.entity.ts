@@ -1,5 +1,5 @@
-import {Column, Entity, OneToMany, PrimaryColumn} from 'typeorm';
-import {Tweet} from './tweet.entity';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
+import { Tweet } from './tweet.entity';
 
 @Entity()
 export class User {
@@ -13,8 +13,4 @@ export class User {
         default: '',
     })
     password: string;
-
-    // each user can have multiple follows
-    @OneToMany(() => Tweet, tweet => tweet.username)
-    tweets: Tweet[];
 }
