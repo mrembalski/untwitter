@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-import { IsStrongPassword } from 'class-validator';
 import { UsersService } from './services/users/users.service';
 import { UsersModule } from './users.module';
 

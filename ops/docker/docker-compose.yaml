@@ -53,23 +53,46 @@ services:
     networks:
       - nw
 
-  users_nginx:
+  follows_db_service:
+    image: postgres:14.2-alpine
+    environment:
+      PGPORT: 5434
+      POSTGRES_PASSWORD: follows_password
+      POSTGRES_USER: follows_user
+      POSTGRES_DB: follows_db
+    expose:
+      - 5434
+    networks:
+      - nw
+
+  follows_web_service:
+    depends_on:
+      - follows_db_service
+    build:
+      context: ../..
+      dockerfile: ops/docker/follows_web_service.dockerfile
+    environment:
+      DB_PORT: 5434
+      DB_HOST: follows_db_service
+      DB_USERNAME: follows_user
+      DB_PASSWORD: follows_password
+      DB_NAME: follows_db
+    networks:
+      - nw
+
+  nginx:
     depends_on:
       - users_web_service
       - tweets_web_service
+      - follows_web_service
     build:
       context: ../..
-      dockerfile: ops/docker/users_nginx.dockerfile
+      dockerfile: ops/docker/nginx.dockerfile
     ports:
       - 80:80
       - 443:443
     networks:
       - nw
-
-volumes:
-  users-volume: #
-  tweets-volume:
-    #
 
 networks:
   nw:

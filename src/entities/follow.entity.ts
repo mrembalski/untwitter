@@ -1,9 +1,15 @@
-import { Entity, Column, Unique } from 'typeorm';
+import { Entity, Column, Unique, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
 @Unique(['followeeUsername', 'followerUsername'])
 export class Follow {
+  @PrimaryGeneratedColumn({
+    type: 'bigint',
+    name: 'follow_id',
+  })
+  id: number;
+
   @Column({
     nullable: false,
   })
