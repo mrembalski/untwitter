@@ -9,17 +9,19 @@ import {
     ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CommunicationController } from 'src/communication/user_exists';
+import { CommunicationController } from 'src/communication/communication_controller';
 import { CreateLikeDto } from '../../dtos/create.like.dto';
 import { LikesService } from '../../services/likes/likes.service';
+import { HttpService } from '@nestjs/axios';
 
 @Controller('likes')
 export class LikesController extends CommunicationController {
     constructor(
         private readonly LikesService: LikesService,
+        httpService: HttpService,
         configService: ConfigService,
     ) {
-        super(configService)
+        super(configService, httpService)
     }
 
     // returns like count for a given tweet

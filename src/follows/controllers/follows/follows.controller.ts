@@ -1,3 +1,4 @@
+import { HttpService } from '@nestjs/axios';
 import {
   Body,
   Controller,
@@ -8,7 +9,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CommunicationController } from 'src/communication/user_exists';
+import { CommunicationController } from 'src/communication/communication_controller';
 import { CreateFollowDto } from '../../dtos/create.follow.dto';
 import { FollowsService } from '../../services/follows/follows.service';
 
@@ -16,9 +17,11 @@ import { FollowsService } from '../../services/follows/follows.service';
 export class FollowsController extends CommunicationController {
   constructor(
     private readonly followsService: FollowsService,
+    httpService: HttpService,
     configService: ConfigService,
   ) {
     super(configService)
+    super(configService, httpService)
   }
 
 
