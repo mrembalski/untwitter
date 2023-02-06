@@ -12,8 +12,7 @@ export class TweetsService {
   ) {}
 
   createTweet(createTweetDto: CreateTweetDto) {
-    const newTweet = this.tweetRepository.create(createTweetDto);
-    return this.tweetRepository.save(newTweet);
+    return this.tweetRepository.save(this.tweetRepository.create(createTweetDto));
   }
 
   findTweetsByUsername(username: string) {

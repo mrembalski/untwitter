@@ -22,22 +22,15 @@ export class FollowsService {
     }
 
     allFollows(username: string) {
-        let res = [];
-        this.followRepository.find({
+        return this.followRepository.find({
             where: {
                 followeeUsername: username
             }
-        }).then((follows) => {
-            follows.forEach((follow) => {
-                res.push(follow.followerUsername);
-            });
         });
-        return res;
     }
 
     createFollow(createFollowDto: CreateFollowDto) {
-        const newFollow = this.followRepository.create(createFollowDto);
-        return this.followRepository.save(newFollow);
+        return this.followRepository.save(this.followRepository.create(createFollowDto));
     }
 
     deleteFollow(followeeUsername: string, followerUsername: string) {

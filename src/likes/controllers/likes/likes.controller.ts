@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CommunicationController } from 'src/communication/user_exists';
-import { CreateLikesDto } from '../../dtos/create.likes.dto';
+import { CreateLikeDto } from '../../dtos/create.like.dto';
 import { LikesService } from '../../services/likes/likes.service';
 
 @Controller('likes')
@@ -33,7 +33,7 @@ export class LikesController extends CommunicationController {
 
     @Post('create')
     @UsePipes(ValidationPipe)
-    createLike(@Body() createLikesDto: CreateLikesDto) {
-        return this.LikesService.createLike(createLikesDto);
+    createLike(@Body() createLikeDto: CreateLikeDto) {
+        return this.LikesService.createLike(createLikeDto);
     }
 }

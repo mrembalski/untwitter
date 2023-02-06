@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Like} from 'src/entities/like.entity';
-import {CreateLikesDto} from 'src/likes/dtos/create.likes.dto';
+import {CreateLikeDto} from 'src/likes/dtos/create.like.dto';
 import {Repository} from 'typeorm';
 
 @Injectable()
@@ -20,8 +20,7 @@ export class LikesService {
         });
     }
 
-    createLike(createLikesDto: CreateLikesDto) {
-        const like = this.likeRepository.create(createLikesDto);
-        return this.likeRepository.save(like);
+    createLike(createLikeDto: CreateLikeDto) {
+        return this.likeRepository.save(this.likeRepository.create(createLikeDto));
     }
 }
