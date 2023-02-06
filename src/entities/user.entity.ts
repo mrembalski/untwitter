@@ -1,10 +1,19 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { Tweet } from './tweet.entity';
+import { Column, Entity, ObjectID, ObjectIdColumn, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class User {
-    @PrimaryColumn({
+    @ObjectIdColumn(
+        {
+            nullable: false,
+            generated: true,
+            type: "bigint"
+        }
+    )
+    id: ObjectID;
+
+    @Column({
         nullable: false,
+        unique: true
     })
     username: string;
 
