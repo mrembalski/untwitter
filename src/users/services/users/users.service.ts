@@ -10,15 +10,15 @@ export class UsersService {
         @InjectRepository(User) private readonly userRepository: Repository<User>,
     ) { }
 
-    createUser(createUserDto: CreateUserDto) {
+    async createUser(createUserDto: CreateUserDto) {
         return this.userRepository.save(this.userRepository.create(createUserDto));
     }
 
-    findUserByUsername(username: string) {
-        return this.userRepository.findOneOrFail({ where: { username } });
+    async findUserByUsername(username: string) {
+        return this.userRepository.findOne({ where: { username } });
     }
 
-    doesUserExist(username: string) {
-        return this.userRepository.findOne({where: {username}}) != null;
+    async doesUserExist(username: string) {
+        return (await this.userRepository.findOne({where: {username}})) !== null;
     }
 }

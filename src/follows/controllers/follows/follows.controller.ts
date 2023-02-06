@@ -19,7 +19,6 @@ export class FollowsController extends CommunicationController {
     configService: ConfigService,
   ) {
     super(configService)
-    console.log("XD", this)
   }
 
 
