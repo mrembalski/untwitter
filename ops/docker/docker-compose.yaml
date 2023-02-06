@@ -1,99 +1,125 @@
-version: "3.9"
+version: "3.8"
+
 services:
-  users_db_service:
-    image: postgres:14.2-alpine
-    environment:
-      POSTGRES_PASSWORD: users_password
-      POSTGRES_USER: users_user
-      POSTGRES_DB: users_db
+  users_db_1:
+    image: mongo:4.2
+    command: [ "--replSet", "users-replica-set", "--bind_ip_all" ]
+    volumes:
+      - ./data/users_db_1:/data/db
     expose:
-      - 5432
+      - 27017
+    healthcheck:
+      test: test $$(echo "rs.initiate({_id:'users-replica-set',members:[{_id:0,host:\"users_db_1:27017\"},{_id:1,host:\"users_db_2:27017\"},{_id:2,host:\"users_db_3:27017\"}]}).ok || rs.status().ok" | mongo --port 27017 --quiet) -eq 1
+      interval: 10s
+      start_period: 30s
+    networks:
+      - nw
+
+  users_db_2:
+    image: mongo:4.2
+    command: [ "--replSet", "users-replica-set", "--bind_ip_all" ]
+    volumes:
+      - ./data/users_db_2:/data/db
+    expose:
+      - 27017
+    networks:
+      - nw
+
+  users_db_3:
+    image: mongo:4.2
+    command: [ "--replSet", "users-replica-set", "--bind_ip_all" ]
+    volumes:
+      - ./data/users_db_3:/data/db
+    expose:
+      - 27017
     networks:
       - nw
 
   users_web_service:
     depends_on:
-      - users_db_service
+      - users_db_1
+      - users_db_2
+      - users_db_3
     build:
       context: ../..
       dockerfile: ops/docker/users_web_service.dockerfile
     environment:
-      DB_PORT: 5432
-      DB_HOST: users_db_service
-      DB_USERNAME: users_user
-      DB_PASSWORD: users_password
-      DB_NAME: users_db
+      DB_PORT: 27017
+      DB_HOST: users_db_1,users_db_2,users_db_3
+      DB_REPLICASET: users-replica-set
     networks:
       - nw
-
-  tweets_db_service:
-    image: postgres:14.2-alpine
-    environment:
-      PGPORT: 5433
-      POSTGRES_PASSWORD: tweets_password
-      POSTGRES_USER: tweets_user
-      POSTGRES_DB: tweets_db
-    expose:
-      - 5433
-    networks:
-      - nw
-
-  tweets_web_service:
-    depends_on:
-      - tweets_db_service
-    build:
-      context: ../..
-      dockerfile: ops/docker/tweets_web_service.dockerfile
-    environment:
-      DB_PORT: 5433
-      DB_HOST: tweets_db_service
-      DB_USERNAME: tweets_user
-      DB_PASSWORD: tweets_password
-      DB_NAME: tweets_db
-    networks:
-      - nw
-
-  follows_db_service:
-    image: postgres:14.2-alpine
-    environment:
-      PGPORT: 5434
-      POSTGRES_PASSWORD: follows_password
-      POSTGRES_USER: follows_user
-      POSTGRES_DB: follows_db
-    expose:
-      - 5434
-    networks:
-      - nw
-
-  follows_web_service:
-    depends_on:
-      - follows_db_service
-    build:
-      context: ../..
-      dockerfile: ops/docker/follows_web_service.dockerfile
-    environment:
-      DB_PORT: 5434
-      DB_HOST: follows_db_service
-      DB_USERNAME: follows_user
-      DB_PASSWORD: follows_password
-      DB_NAME: follows_db
-    networks:
-      - nw
-
-  nginx:
-    depends_on:
-      - users_web_service
-      - tweets_web_service
-      - follows_web_service
-    build:
-      context: ../..
-      dockerfile: ops/docker/nginx.dockerfile
-    ports:
-      - 80:80
-      - 443:443
-    networks:
-      - nw
+  # tweets_db_service:
+  #   image: postgres:14.2-alpine
+  #   environment:
+  #     PGPORT: 5433
+  #     POSTGRES_PASSWORD: tweets_password
+  #     POSTGRES_USER: tweets_user
+  #     POSTGRES_DB: tweets_db
+  #   expose:
+  #     - 5433
+  #   networks:
+  #     - nw
 
 networks:
   nw:
     name: nw
+  # tweets_web_service:
+  #   depends_on:
+  #     - tweets_db_service
+  #   build:
+  #     context: ../..
+  #     dockerfile: ops/docker/tweets_web_service.dockerfile
+  #   environment:
+  #     DB_PORT: 5433
+  #     DB_HOST: tweets_db_service
+  #     DB_USERNAME: tweets_user
+  #     DB_PASSWORD: tweets_password
+  #     DB_NAME: tweets_db
+  #   networks:
+  #     - nw
+
+  # follows_db_service:
+  #   image: postgres:14.2-alpine
+  #   environment:
+  #     PGPORT: 5434
+  #     POSTGRES_PASSWORD: follows_password
+  #     POSTGRES_USER: follows_user
+  #     POSTGRES_DB: follows_db
+  #   expose:
+  #     - 5434
+  #   networks:
+  #     - nw
+
+  # follows_web_service:
+  #   depends_on:
+  #     - follows_db_service
+  #   build:
+  #     context: ../..
+  #     dockerfile: ops/docker/follows_web_service.dockerfile
+  #   environment:
+  #     DB_PORT: 5434
+  #     DB_HOST: follows_db_service
+  #     DB_USERNAME: follows_user
+  #     DB_PASSWORD: follows_password
+  #     DB_NAME: follows_db
+  #   networks:
+  #     - nw
+
+  # nginx:
+  #   depends_on:
+  #     - users_web_service
+  #     - tweets_web_service
+  #     - follows_web_service
+  #   build:
+  #     context: ../..
+  #     dockerfile: ops/docker/nginx.dockerfile
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   networks:
+  #     - nw
+
+  # networks:
+  #   nw:
+  #     name: nw
