@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+  # Mongodb replicaset is partly based on https://github.com/UpSync-Dev/docker-compose-mongo-replica-set
   users_db_1:
     image: mongo:4.2
     command: [ "--replSet", "users-replica-set", "--bind_ip_all" ]
@@ -49,77 +50,91 @@ services:
       DB_REPLICASET: users-replica-set
     networks:
       - nw
-  # tweets_db_service:
-  #   image: postgres:14.2-alpine
-  #   environment:
-  #     PGPORT: 5433
-  #     POSTGRES_PASSWORD: tweets_password
-  #     POSTGRES_USER: tweets_user
-  #     POSTGRES_DB: tweets_db
-  #   expose:
-  #     - 5433
-  #   networks:
-  #     - nw
+
+  mongo_express:
+    image: mongo-express
+    depends_on:
+      - users_db_1
+      - users_db_2
+      - users_db_3
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://users_db_1:27017,users_db_2:27017,users_db_3:27017/?replicaSet=users-replica-set"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "admin"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "admin"
+    ports:
+      - "8888:8081"
+    networks:
+      - nw
+
+  tweets_db_service:
+    image: postgres:14.2-alpine
+    environment:
+      PGPORT: 5433
+      POSTGRES_PASSWORD: tweets_password
+      POSTGRES_USER: tweets_user
+      POSTGRES_DB: tweets_db
+    expose:
+      - 5433
+    networks:
+      - nw
+
+  tweets_web_service:
+    depends_on:
+      - tweets_db_service
+    build:
+      context: ../..
+      dockerfile: ops/docker/tweets_web_service.dockerfile
+    environment:
+      DB_PORT: 5433
+      DB_HOST: tweets_db_service
+      DB_USERNAME: tweets_user
+      DB_PASSWORD: tweets_password
+      DB_NAME: tweets_db
+    networks:
+      - nw
+
+  follows_db_service:
+    image: postgres:14.2-alpine
+    environment:
+      PGPORT: 5434
+      POSTGRES_PASSWORD: follows_password
+      POSTGRES_USER: follows_user
+      POSTGRES_DB: follows_db
+    expose:
+      - 5434
+    networks:
+      - nw
+
+  follows_web_service:
+    depends_on:
+      - follows_db_service
+    build:
+      context: ../..
+      dockerfile: ops/docker/follows_web_service.dockerfile
+    environment:
+      DB_PORT: 5434
+      DB_HOST: follows_db_service
+      DB_USERNAME: follows_user
+      DB_PASSWORD: follows_password
+      DB_NAME: follows_db
+    networks:
+      - nw
+
+  nginx:
+    depends_on:
+      - users_web_service
+      - tweets_web_service
+      - follows_web_service
+    build:
+      context: ../..
+      dockerfile: ops/docker/nginx.dockerfile
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - nw
 
 networks:
   nw:
     name: nw
-  # tweets_web_service:
-  #   depends_on:
-  #     - tweets_db_service
-  #   build:
-  #     context: ../..
-  #     dockerfile: ops/docker/tweets_web_service.dockerfile
-  #   environment:
-  #     DB_PORT: 5433
-  #     DB_HOST: tweets_db_service
-  #     DB_USERNAME: tweets_user
-  #     DB_PASSWORD: tweets_password
-  #     DB_NAME: tweets_db
-  #   networks:
-  #     - nw
-
-  # follows_db_service:
-  #   image: postgres:14.2-alpine
-  #   environment:
-  #     PGPORT: 5434
-  #     POSTGRES_PASSWORD: follows_password
-  #     POSTGRES_USER: follows_user
-  #     POSTGRES_DB: follows_db
-  #   expose:
-  #     - 5434
-  #   networks:
-  #     - nw
-
-  # follows_web_service:
-  #   depends_on:
-  #     - follows_db_service
-  #   build:
-  #     context: ../..
-  #     dockerfile: ops/docker/follows_web_service.dockerfile
-  #   environment:
-  #     DB_PORT: 5434
-  #     DB_HOST: follows_db_service
-  #     DB_USERNAME: follows_user
-  #     DB_PASSWORD: follows_password
-  #     DB_NAME: follows_db
-  #   networks:
-  #     - nw
-
-  # nginx:
-  #   depends_on:
-  #     - users_web_service
-  #     - tweets_web_service
-  #     - follows_web_service
-  #   build:
-  #     context: ../..
-  #     dockerfile: ops/docker/nginx.dockerfile
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   networks:
-  #     - nw
-
-  # networks:
-  #   nw:
-  #     name: nw
