@@ -12,8 +12,7 @@ export class TweetsService {
   ) {}
 
   createTweet(createTweetDto: CreateTweetDto) {
-    const newTweet = this.tweetRepository.create(createTweetDto);
-    return this.tweetRepository.save(newTweet);
+    return this.tweetRepository.save(this.tweetRepository.create(createTweetDto));
   }
 
   findTweetsByUsername(username: string) {
@@ -28,5 +27,9 @@ export class TweetsService {
       where: { content: Like("%"+phrase+"%") },
       order: { creationTime: 'DESC' }
     });
+  }
+
+  doesTweetExist(id: number) {
+    return this.tweetRepository.findOne({where: {id}}) != null;
   }
 }
