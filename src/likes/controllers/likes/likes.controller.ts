@@ -20,8 +20,6 @@ export class LikesController extends CommunicationController {
         configService: ConfigService,
     ) {
         super(configService)
-        console.log("XD", this)
-        // todo usunąć?
     }
 
     // returns like count for a given tweet
