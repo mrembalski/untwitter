@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   Param,
   Post,
   UsePipes,
@@ -24,12 +23,19 @@ export class FollowsController extends CommunicationController {
   }
 
 
-  @Get('follows/:followeeUsername/:followerUsername')
-  findFollow(
+  // returns true if a follow exists, false otherwise
+  @Get('doesFollowExist/:followeeUsername/:followerUsername')
+  doesFollowExist(
     @Param('followeeUsername') followeeUsername: string,
     @Param('followerUsername') followerUsername: string,
   ) {
-    return this.followsService.findFollow(followeeUsername, followerUsername);
+    return this.followsService.doesFollowExist(followeeUsername, followerUsername);
+  }
+
+  // returns all users that follow a given username
+  @Get('allFollows/:username')
+    allFollows(@Param('username') username: string) {
+        return this.followsService.allFollows(username);
   }
 
 
@@ -43,4 +49,9 @@ export class FollowsController extends CommunicationController {
 
     return this.followsService.createFollow(createFollowDto);
   }
+
+    @Post('delete')
+    deleteFollow(@Body() createFollowDto: CreateFollowDto) {
+      return this.followsService.deleteFollow(createFollowDto.followeeUsername, createFollowDto.followerUsername);
+    }
 }

@@ -29,4 +29,11 @@ export class UsersController {
     ) {
         return this.userService.createUser(createUserDto);
     }
+
+    @Get('doesUserExist/:username')
+    doesUserExist(
+        @Param('username') username: string
+    ) {
+        return this.userService.doesUserExist(username);
+    }
 }
