@@ -154,7 +154,18 @@ services:
     networks:
       - nw
 
-  frontend_web_service:
+  frontend_web_service_1:
+    depends_on:
+      - users_web_service
+      - tweets_web_service
+      - follows_web_service
+    build:
+      context: ../..
+      dockerfile: ops/docker/frontend_web_service.dockerfile
+    networks:
+      - nw
+
+  frontend_web_service_2:
     depends_on:
       - users_web_service
       - tweets_web_service
@@ -170,7 +181,8 @@ services:
       - users_web_service
       - tweets_web_service
       - follows_web_service
-      - frontend_web_service
+      - frontend_web_service_1
+      - frontend_web_service_2
     build:
       context: ../..
       dockerfile: ops/docker/nginx.dockerfile
