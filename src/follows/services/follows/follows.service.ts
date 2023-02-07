@@ -29,6 +29,15 @@ export class FollowsService {
         });
     }
 
+    // kogo dany username followuje
+    async allFollowees(username: string) {
+        return this.followRepository.find({
+            where: {
+                followerUsername: username
+            }
+        });
+    }
+
     async createFollow(createFollowDto: CreateFollowDto) {
         return this.followRepository.save(this.followRepository.create(createFollowDto));
     }

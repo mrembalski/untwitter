@@ -32,8 +32,8 @@ export class AppController extends CommunicationController {
     async homeTimeline(@Param('username') username: string) {
         let exists = await this.userExists(username)
         if (exists) {
-
-            return { mess: 'Welcome to ' + username + ' home timeline!' };
+            let tweetsWithLikes = await this.getTweetsFromFollowedUsers(username)
+            return { mess: 'Welcome to ' + username + ' home timeline!', tweets : tweetsWithLikes };
         } else {
             return { mess: 'User does not exist.' };
         }

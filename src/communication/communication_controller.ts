@@ -47,8 +47,13 @@ export class CommunicationController {
 
     async getTweetsFromFollowedUsers(username: string): Promise<any> {
         const response = await fetch(
-            'http://tweets_web_service:3000/tweets/followedUsersTweets/' + username,
+            'http://follows_web_service:3000/follows/allFollowees/' + username,
         );
-        return await response.json();
+        let allFollowees = await response.json();
+        console.log(allFollowees)
+
+        return Promise.all(allFollowees.map(async (followee) =>
+            this.getTweetsWithLikeCount(followee.followeeUsername)
+        ));
     }
 }

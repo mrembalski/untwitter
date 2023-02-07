@@ -1,1 +1,5 @@
 <h3>{{mess}}</h3>
+
+{{#each tweets}}
+    <li>tweet content: {{this.content}}, likes count: {{this.likesCount}} </li>
+{{/each}}
