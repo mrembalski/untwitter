@@ -4,9 +4,10 @@ import { LikesService } from './services/likes/likes.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Like } from 'src/entities/like.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HttpModule } from "@nestjs/axios";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Like]),
+    imports: [HttpModule, TypeOrmModule.forFeature([Like]),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
         imports: [ConfigModule],

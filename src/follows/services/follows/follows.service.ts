@@ -12,16 +12,16 @@ export class FollowsService {
     ) {
     }
 
-    doesFollowExist(followeeUsername: string, followerUsername: string) {
-        return this.followRepository.findOne({
+    async doesFollowExist(followeeUsername: string, followerUsername: string) {
+        return (await this.followRepository.findOne({
             where: {
                 followeeUsername: followeeUsername,
                 followerUsername: followerUsername
             }
-        }) != null;
+        })) !== null;
     }
 
-    allFollows(username: string) {
+    async allFollows(username: string) {
         return this.followRepository.find({
             where: {
                 followeeUsername: username
@@ -29,11 +29,20 @@ export class FollowsService {
         });
     }
 
-    createFollow(createFollowDto: CreateFollowDto) {
+    // kogo dany username followuje
+    async allFollowees(username: string) {
+        return this.followRepository.find({
+            where: {
+                followerUsername: username
+            }
+        });
+    }
+
+    async createFollow(createFollowDto: CreateFollowDto) {
         return this.followRepository.save(this.followRepository.create(createFollowDto));
     }
 
-    deleteFollow(followeeUsername: string, followerUsername: string) {
+    async deleteFollow(followeeUsername: string, followerUsername: string) {
         return this.followRepository.delete({
             followeeUsername: followeeUsername,
             followerUsername: followerUsername

@@ -12,7 +12,7 @@ export class LikesService {
     ) {
     }
 
-    likesCount(tweetId: number) {
+    async likesCount(tweetId: number) {
         return this.likeRepository.count({
             where: {
                 tweetId: tweetId
@@ -20,7 +20,7 @@ export class LikesService {
         });
     }
 
-    createLike(createLikeDto: CreateLikeDto) {
+    async createLike(createLikeDto: CreateLikeDto) {
         return this.likeRepository.save(this.likeRepository.create(createLikeDto));
     }
 }

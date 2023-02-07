@@ -39,6 +39,12 @@ export class FollowsController extends CommunicationController {
         return this.followsService.allFollows(username);
   }
 
+    // returns all users that a given username follows
+    @Get('allFollowees/:username')
+    allFollowees(@Param('username') username: string) {
+        return this.followsService.allFollowees(username);
+    }
+
 
   @Post('create')
   @UsePipes(ValidationPipe)
