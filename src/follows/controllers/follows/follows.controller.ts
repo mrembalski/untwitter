@@ -20,7 +20,6 @@ export class FollowsController extends CommunicationController {
     httpService: HttpService,
     configService: ConfigService,
   ) {
-    super(configService)
     super(configService, httpService)
   }
 

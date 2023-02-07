@@ -13,13 +13,14 @@ async function bootstrap() {
     let tweets = ['content1', 'content2', 'content3', 'content4'];
     for (let i = 0; i < usernames.length; i++) {
         for (let j = 0; j < tweets.length; j++) {
+            let content = usernames[i] + ' ' + tweets[j];
             let exists = await tweetRepository.findOne({
-                where: { username: usernames[i], content: tweets[j] },
+                where: { username: usernames[i], content: content },
             });
             if (exists === null) {
                 await tweetRepository.save({
                     username: usernames[i],
-                    content: tweets[j],
+                    content: content,
                 });
             }
         }

@@ -121,6 +121,33 @@ services:
     networks:
       - nw
 
+  likes_db_service:
+    image: postgres:14.2-alpine
+    environment:
+      PGPORT: 5435
+      POSTGRES_PASSWORD: likes_password
+      POSTGRES_USER: likes_user
+      POSTGRES_DB: likes_db
+    expose:
+      - 5435
+    networks:
+      - nw
+
+  likes_web_service:
+    depends_on:
+      - likes_db_service
+    build:
+      context: ../..
+      dockerfile: ops/docker/likes_web_service.dockerfile
+    environment:
+      DB_PORT: 5435
+      DB_HOST: likes_db_service
+      DB_USERNAME: likes_user
+      DB_PASSWORD: likes_password
+      DB_NAME: likes_db
+    networks:
+      - nw
+
   frontend_web_service:
     depends_on:
       - users_web_service
