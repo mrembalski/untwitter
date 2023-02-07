@@ -1,4 +1,4 @@
-import { Get, Controller, Render, Param } from '@nestjs/common';
+import {Get, Controller, Render, Param, flatten} from '@nestjs/common';
 import {CommunicationController} from "../communication/communication_controller";
 
 @Controller()
@@ -33,7 +33,8 @@ export class AppController extends CommunicationController {
         let exists = await this.userExists(username)
         if (exists) {
             let tweetsWithLikes = await this.getTweetsFromFollowedUsers(username)
-            return { mess: 'Welcome to ' + username + ' home timeline!', tweets : tweetsWithLikes };
+            console.log(tweetsWithLikes)
+            return { mess: 'Welcome to ' + username + ' home timeline!', tweets : flatten(tweetsWithLikes) };
         } else {
             return { mess: 'User does not exist.' };
         }
