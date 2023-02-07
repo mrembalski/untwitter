@@ -19,6 +19,6 @@ export class UsersService {
     }
 
     async doesUserExist(username: string) {
-        return (await this.userRepository.findOne({where: {username}})) !== null;
+        return (await this.userRepository.findOne({ where: { username } })) !== null;
     }
 }

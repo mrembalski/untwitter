@@ -5,11 +5,15 @@ import {
     Get,
     Param,
     Post,
+    UseGuards,
     UsePipes,
     ValidationPipe,
+    Request,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AuthGuard } from '@nestjs/passport';
 import { CommunicationController } from 'src/communication/communication_controller';
+import { AuthService } from 'src/users/auth/auth.service';
 import { CreateUserDto } from 'src/users/dtos/create.user.dto';
 import { UsersService } from 'src/users/services/users/users.service';
 
@@ -17,6 +21,7 @@ import { UsersService } from 'src/users/services/users/users.service';
 export class UsersController extends CommunicationController {
     constructor(
         private readonly userService: UsersService,
+        private readonly authService: AuthService,
         configService: ConfigService,
         httpService: HttpService,
     ) {
@@ -44,5 +49,11 @@ export class UsersController extends CommunicationController {
         @Param('username') username: string
     ) {
         return this.userService.doesUserExist(username);
+    }
+
+    @UseGuards(AuthGuard('local'))
+    @Post('auth/login')
+    async login(@Request() req) {
+        return this.authService.login(req.user);
     }
 }

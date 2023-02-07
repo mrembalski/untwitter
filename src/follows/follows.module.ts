@@ -5,6 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Follow } from 'src/entities/follow.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { JwtStrategy } from 'src/users/auth/jwt.strategy';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
     imports: [
@@ -24,9 +27,18 @@ import { HttpModule } from '@nestjs/axios';
                 synchronize: true,
             }),
             inject: [ConfigService],
+        }),
+        PassportModule,
+        JwtModule.registerAsync({
+            imports: [ConfigModule],
+            useFactory: (configService: ConfigService) => ({
+                /** I know this is just this string. */
+                secret: "JWT_SECRET",
+                signOptions: { expiresIn: '7d' },
+            })
         })
     ],
     controllers: [FollowsController],
-    providers: [FollowsService]
+    providers: [FollowsService, JwtStrategy]
 })
 export class FollowsModule { }

@@ -5,6 +5,11 @@ import { User } from 'src/entities/user.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthService } from './auth/auth.service';
+import { JwtStrategy } from './auth/jwt.strategy';
+import { LocalStrategy } from './auth/local.strategy';
 
 @Module({
   imports: [
@@ -26,9 +31,19 @@ import { HttpModule } from '@nestjs/axios';
         readPreference: "secondaryPreferred"
       }),
       inject: [ConfigService],
-    })
+    }),
+    PassportModule,
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        /** I know this is just this string. */
+        secret: "JWT_SECRET",
+        signOptions: { expiresIn: '7d' },
+      }),
+    }),
+
   ],
   controllers: [UsersController],
-  providers: [UsersService]
+  providers: [UsersService, AuthService, JwtStrategy, LocalStrategy]
 })
 export class UsersModule { }

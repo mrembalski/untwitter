@@ -5,10 +5,12 @@ import {
   Get,
   Param,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AuthGuard } from '@nestjs/passport';
 import { CommunicationController } from 'src/communication/communication_controller';
 import { CreateFollowDto } from '../../dtos/create.follow.dto';
 import { FollowsService } from '../../services/follows/follows.service';
@@ -35,8 +37,8 @@ export class FollowsController extends CommunicationController {
 
   // returns all users that follow a given username
   @Get('allFollows/:username')
-    allFollows(@Param('username') username: string) {
-        return this.followsService.allFollows(username);
+  allFollows(@Param('username') username: string) {
+    return this.followsService.allFollows(username);
   }
 
     // returns all users that a given username follows
@@ -46,6 +48,7 @@ export class FollowsController extends CommunicationController {
     }
 
 
+  @UseGuards(AuthGuard('jwt'))
   @Post('create')
   @UsePipes(ValidationPipe)
   createFollow(@Body() createFollowDto: CreateFollowDto) {
@@ -57,8 +60,8 @@ export class FollowsController extends CommunicationController {
     return this.followsService.createFollow(createFollowDto);
   }
 
-    @Post('delete')
-    deleteFollow(@Body() createFollowDto: CreateFollowDto) {
-      return this.followsService.deleteFollow(createFollowDto.followeeUsername, createFollowDto.followerUsername);
-    }
+  @Post('delete')
+  deleteFollow(@Body() createFollowDto: CreateFollowDto) {
+    return this.followsService.deleteFollow(createFollowDto.followeeUsername, createFollowDto.followerUsername);
+  }
 }
