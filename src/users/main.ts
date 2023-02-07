@@ -5,7 +5,7 @@ import { UsersModule } from './users.module';
 async function bootstrap() {
     const app = await NestFactory.create(UsersModule);
 
-    /** Adding dev-entities */
+    /** Adding users */
     const usersService = app.get(UsersService);
     const usersRepository = usersService["userRepository"];
 

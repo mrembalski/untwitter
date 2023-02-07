@@ -11,25 +11,25 @@ export class TweetsService {
     private readonly tweetRepository: Repository<Tweet>,
   ) {}
 
-  createTweet(createTweetDto: CreateTweetDto) {
+  async createTweet(createTweetDto: CreateTweetDto) {
     return this.tweetRepository.save(this.tweetRepository.create(createTweetDto));
   }
 
-  findTweetsByUsername(username: string) {
+  async findTweetsByUsername(username: string) {
     return this.tweetRepository.find({
       where: { username : username },
       order: { creationTime: 'DESC' }
     });
   }
 
-  findTweetsWithPhrase(phrase: string) {
+  async findTweetsWithPhrase(phrase: string) {
     return this.tweetRepository.find({
       where: { content: Like("%"+phrase+"%") },
       order: { creationTime: 'DESC' }
     });
   }
 
-  doesTweetExist(id: number) {
-    return this.tweetRepository.findOne({where: {id}}) != null;
+  async doesTweetExist(id: number) {
+    return (await this.tweetRepository.findOne({where: {id}})) !== null;
   }
 }

@@ -4,9 +4,10 @@ import { FollowsService } from './services/follows/follows.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Follow } from 'src/entities/follow.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { HttpModule } from "@nestjs/axios";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Follow]),
+    imports: [HttpModule, TypeOrmModule.forFeature([Follow]),
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
         imports: [ConfigModule],
