@@ -1,6 +1,6 @@
 ## Description
 
-Twitter copycat app, with microservices architecture.
+Twitter copycat app, with microservices architecture, load balancing, cache and db replications
 
 ## Installation
 Requires docker.
