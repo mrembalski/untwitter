@@ -20,9 +20,10 @@ import { HttpModule } from '@nestjs/axios';
         port: +configService.get<number>("DB_PORT"),
         replicaSet: configService.get("DB_REPLICASET"),
 
-        retryDelay: 5000,
-        retryAttempts: 15,
-        entities: [User]
+        retryDelay: 10000,
+        entities: [User],
+
+        readPreference: "secondaryPreferred"
       }),
       inject: [ConfigService],
     })
